@@ -18,4 +18,4 @@ def generate_stock_alerts(store_id: str) -> List[dict]:
             alerts.append({"type": "OVERSTOCK", "message": f"Exceso de stock en '{item['name']}'. Aplica descuento del 15%.", "color": "yellow"})
             
     alerts.append({"type": "CART_ABANDONED", "message": "15 carritos abandonados hoy ($1,200). Envia campaña de recuperación.", "color": "blue"})
-    return alerts-
+    return alerts
