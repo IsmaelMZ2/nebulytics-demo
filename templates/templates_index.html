@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebulytics - Inteligencia para Tiendanube</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>body { background-color: #111019; color: white; font-family: sans-serif; }</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-8">
+    <div class="max-w-3xl text-center space-y-8 relative z-10">
+        <div class="flex justify-center mb-6">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center text-3xl font-bold">N</div>
+        </div>
+        <h1 class="text-5xl font-extrabold text-white">Nebulytics</h1>
+        <p class="text-2xl text-slate-300">Inteligencia predictiva para Tiendanube</p>
+        <div class="pt-8 flex justify-center gap-4">
+            <a href="/api/v1/auth/install" class="bg-white text-black font-bold py-4 px-8 rounded-xl flex items-center gap-3"><i data-lucide="shopping-bag"></i> Conectar Tiendanube</a>
+            <a href="/dashboard" class="bg-gray-800 text-white font-semibold py-4 px-8 rounded-xl border border-gray-700">Ver Demo Dashboard</a>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
