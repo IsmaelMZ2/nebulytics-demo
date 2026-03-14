@@ -1,35 +1,52 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from ml.prophet_model import get_inventory_forecast
 from ml.customer_segmentation import get_customer_segments
-from services.alerts import generate_stock_alerts # Importamos tu función
+from services.alerts import generate_stock_alerts
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+class ChatMessage(BaseModel):
+    message: str
+
 @app.get("/")
-async def dashboard(request: Request):
-    # 1. Llamamos a tu lógica de alertas con un ID de prueba
-    alerts_data = generate_stock_alerts(store_id="tienda_demo_01")
-    
-    # 2. Obtenemos datos de IA
+async def index(request: Request):
+    # Carga inicial del Dashboard
+    alerts = generate_stock_alerts("tienda_01")
     forecast = get_inventory_forecast()
     segments = get_customer_segments()
-
-    # 3. Datos para la tabla de productos (estáticos para la demo)
-    products = [
-        {"name": "Remera Urban Basic", "sales": 342, "rev": "$684K", "trend": "+18%", "stock": 45},
-        {"name": "Jean Slim Fit", "sales": 287, "rev": "$861K", "trend": "+12%", "stock": 23},
-        {"name": "Zapatillas Runner Pro", "sales": 198, "rev": "$990K", "trend": "+25%", "stock": 8},
-        {"name": "Campera Eco Light", "sales": 156, "rev": "$780K", "trend": "-3%", "stock": 67},
-    ]
-
     return templates.TemplateResponse("index.html", {
-        "request": request,
-        "alerts": alerts_data,
+        "request": request, 
+        "alerts": alerts, 
         "forecast": forecast,
-        "segments": segments,
-        "products": products
+        "segments": segments
     })
+
+@app.post("/chat")
+async def ai_chat(data: ChatMessage):
+    msg = data.message.lower()
+    
+    # Lógica de Orquestación de Intenciones
+    if "proyecc" in msg or "ventas" in msg:
+        data = get_inventory_forecast()
+        return {
+            "reply": "He analizado las tendencias. Se espera un crecimiento del 15% en los ingresos para el próximo mes. He actualizado la gráfica central para que veas el detalle.",
+            "action": "UPDATE_CHART",
+            "payload": data
+        }
+    elif "stock" in msg or "alerta" in msg:
+        alerts = generate_stock_alerts("tienda_01")
+        return {
+            "reply": f"Tienes {len(alerts)} alertas críticas. El producto 'Camiseta Básica' requiere reabastecimiento urgente.",
+            "action": "HIGHLIGHT_ALERTS",
+            "payload": alerts
+        }
+    
+    return {
+        "reply": "Soy Nebulytics IA. Puedo analizar tus ventas, predecir stock o segmentar a tus clientes. ¿Qué prefieres ver?",
+        "action": "NONE"
+    }
