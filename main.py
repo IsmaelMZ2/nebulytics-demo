@@ -1,73 +1,33 @@
-import os
-from fastapi import FastAPI, Request, Depends
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import JSONResponse
-
-# Importamos las piezas que movimos a las carpetas
-from services.auth import get_auth_url, handle_callback
-from services.tiendanube import sync_store_data
-from services.chatbot import ask_nebulytics_bot
+from fastapi.staticfiles import StaticFiles
 from ml.prophet_model import get_inventory_forecast
 from ml.customer_segmentation import get_customer_segments
+from services.alerts import generate_stock_alerts
 
-app = FastAPI(title="Nebulytics API")
-
-# 1. Configuración de Archivos Estáticos y Plantillas
-# Esto permite que Render encuentre tu CSS, JS e HTML
+app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# --- RUTAS DE NAVEGACIÓN (FRONTEND) ---
-
 @app.get("/")
-async def read_root(request: Request):
-    """Página de aterrizaje (Landing Page)"""
-    return templates.TemplateResponse("index.html", {"request": request})
-
-@app.get("/dashboard")
-async def read_dashboard(request: Request):
-    """Panel de control principal con gráficas de IA"""
-    # Aquí simulamos datos para la demo del hackathon
-    forecast = get_inventory_forecast()
-    segments = get_customer_segments()
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request, 
-        "forecast": forecast,
-        "segments": segments
-    })
-
-# --- RUTAS DE AUTENTICACIÓN (TIENDANUBE) ---
-
-@app.get("/api/v1/auth/install")
-async def install(request: Request):
-    """Punto de inicio para instalar la app en Tiendanube"""
-    auth_url = get_auth_url()
-    return JSONResponse({"url": auth_url})
-
-@app.get("/api/v1/auth/callback")
-async def callback(code: str):
-    """Recibe el código de Tiendanube y activa la sincronización"""
-    token_data = await handle_callback(code)
-    # Iniciamos la carga de datos en segundo plano
-    await sync_store_data(token_data['access_token'])
-    return {"status": "success", "message": "Tienda conectada con éxito"}
-
-# --- RUTAS DE INTELIGENCIA ARTIFICIAL (CHATBOT) ---
-
-@app.post("/api/v1/chatbot/ask")
-async def chat(request: Request):
-    """Endpoint que consume el widget.js que pusimos en static"""
-    data = await request.json()
-    user_message = data.get("message")
-    store_id = data.get("store_id", "demo_123")
+async def home(request: Request):
+    # Obtenemos los datos reales de tus modelos de IA
+    forecast_data = get_inventory_forecast()
+    segment_data = get_customer_segments()
+    alerts = generate_stock_alerts()
     
-    response = await ask_nebulytics_bot(store_id, user_message)
-    return {"response": response}
+    # Datos de productos destacados para la tabla
+    top_products = [
+        {"name": "Remera Urban Basic", "sales": 342, "revenue": "$684K", "trend": "+18%", "stock": 45},
+        {"name": "Jean Slim Fit", "sales": 287, "revenue": "$861K", "trend": "+12%", "stock": 23},
+        {"name": "Zapatillas Runner Pro", "sales": 198, "revenue": "$990K", "trend": "+25%", "stock": 8},
+        {"name": "Campera Eco Light", "sales": 156, "revenue": "$780K", "trend": "-3%", "stock": 67},
+    ]
 
-# --- INICIO DEL SERVIDOR ---
-if __name__ == "__main__":
-    import uvicorn
-    # Render usa el puerto que le asigne el sistema ($PORT)
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "forecast": forecast_data,
+        "segments": segment_data,
+        "alerts": alerts,
+        "products": top_products
+    })
