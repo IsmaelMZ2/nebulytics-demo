@@ -2,80 +2,94 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nebulytics IA - Dashboard</title>
+    <title>Nebulytics IA - Dashboard Predictivo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #0b0e14; color: #ffffff; font-family: 'Inter', sans-serif; }
+        body { background-color: #0b0e14; color: #ffffff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .glass-card { background: rgba(23, 27, 38, 0.8); border: 1px solid #2d3343; border-radius: 16px; }
         .alert-red { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.1); }
         .alert-yellow { border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.1); }
         .alert-blue { border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        canvas { max-height: 300px !important; }
     </style>
 </head>
 <body class="p-8">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <header class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-4xl font-extrabold tracking-tight">Panel de Control</h1>
-                <p class="text-gray-400 mt-1">Inteligencia predictiva para Tiendanube</p>
+                <h1 class="text-4xl font-extrabold tracking-tight text-white">Nebulytics <span class="text-cyan-400">IA</span></h1>
+                <p class="text-gray-400 mt-1">Panel de Control Predictivo para Tiendanube</p>
             </div>
-            <div class="bg-cyan-500/10 text-cyan-400 px-4 py-2 rounded-full border border-cyan-500/20 font-bold">
-                Nebulytics v1.0
+            <div class="flex gap-4">
+                <div class="bg-cyan-500/10 text-cyan-400 px-4 py-2 rounded-xl border border-cyan-500/20 font-bold">
+                    Hackathon Marzo 2026
+                </div>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <div class="lg:col-span-1 space-y-6">
-                <h2 class="text-xl font-bold mb-4">Alertas Inteligentes</h2>
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                    Alertas en Tiempo Real
+                </h2>
                 {% for alert in alerts %}
-                <div class="p-4 rounded-xl glass-card alert-{{ alert.color }} transition hover:scale-105 duration-300">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xs font-bold uppercase tracking-wider text-{{ alert.color }}-400">
-                            {{ alert.type.replace('_', ' ') }}
-                        </span>
-                    </div>
+                <div class="p-4 rounded-xl glass-card alert-{{ alert.color }} transition hover:translate-x-2 duration-300">
+                    <p class="text-xs font-bold uppercase text-{{ alert.color }}-400 mb-1">{{ alert.type }}</p>
                     <p class="text-sm text-gray-200">{{ alert.message }}</p>
                 </div>
                 {% endfor %}
             </div>
 
-            <div class="lg:col-span-2 space-y-8">
-                <div class="grid grid-cols-2 gap-4">
+            <div class="lg:col-span-3 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="glass-card p-6">
-                        <p class="text-gray-400 text-xs uppercase font-bold">Ingresos Semanales</p>
-                        <p class="text-3xl font-bold mt-2">$2.8M <span class="text-green-400 text-sm ml-2">↑ 12%</span></p>
+                        <p class="text-gray-400 text-xs font-bold uppercase">Ingresos Proyectados</p>
+                        <p class="text-3xl font-bold mt-2">$2.8M <span class="text-green-400 text-sm">↑ 12%</span></p>
                     </div>
                     <div class="glass-card p-6">
-                        <p class="text-gray-400 text-xs uppercase font-bold">Segmento VIP</p>
-                        <p class="text-3xl font-bold mt-2">89 <span class="text-cyan-400 text-sm ml-2">Leales</span></p>
+                        <p class="text-gray-400 text-xs font-bold uppercase">Precisión del Modelo</p>
+                        <p class="text-3xl font-bold mt-2 text-cyan-400">94.2%</p>
+                    </div>
+                    <div class="glass-card p-6">
+                        <p class="text-gray-400 text-xs font-bold uppercase">Clientes VIP</p>
+                        <p class="text-3xl font-bold mt-2">89 <span class="text-blue-400 text-sm">Leales</span></p>
                     </div>
                 </div>
 
-                <div class="glass-card p-6">
-                    <h3 class="text-xl font-bold mb-4 text-cyan-400">Proyección de Ingresos</h3>
-                    <canvas id="forecastChart" height="150"></canvas>
+                <div class="glass-card p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-white">Proyección de Demanda (Modelo Prophet)</h3>
+                        <span class="bg-purple-500/20 text-purple-400 text-xs px-3 py-1 rounded-full border border-purple-500/30">IA Predictiva</span>
+                    </div>
+                    <canvas id="prophetChart"></canvas>
                 </div>
 
                 <div class="glass-card overflow-hidden">
+                    <div class="p-6 border-b border-gray-800">
+                        <h3 class="font-bold">Análisis de Inventario Inteligente</h3>
+                    </div>
                     <table class="w-full text-left">
-                        <thead class="bg-gray-800/50 text-gray-400 text-xs uppercase">
+                        <thead class="bg-gray-800/50 text-gray-400 text-xs font-bold">
                             <tr>
                                 <th class="p-4">Producto</th>
-                                <th class="p-4">Ventas</th>
-                                <th class="p-4">Stock</th>
+                                <th class="p-4">Ventas Reales</th>
+                                <th class="p-4">Stock IA</th>
                                 <th class="p-4">Tendencia</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm">
                             {% for p in products %}
-                            <tr class="border-t border-gray-800">
-                                <td class="p-4 font-semibold">{{ p.name }}</td>
+                            <tr class="border-t border-gray-800 hover:bg-white/5 transition">
+                                <td class="p-4 font-semibold text-white">{{ p.name }}</td>
                                 <td class="p-4 text-gray-300">{{ p.sales }}</td>
-                                <td class="p-4 text-{{ 'red-400' if p.stock < 10 else 'gray-300' }} font-bold">
-                                    {{ p.stock }}
+                                <td class="p-4">
+                                    <span class="{% if p.stock < 10 %}text-red-400 font-bold animate-pulse{% else %}text-gray-300{% endif %}">
+                                        {{ p.stock }} un.
+                                    </span>
                                 </td>
-                                <td class="p-4 text-green-400">{{ p.trend }}</td>
+                                <td class="p-4 text-green-400 font-bold">{{ p.trend }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -84,35 +98,50 @@
             </div>
         </div>
     </div>
-    
+
+    <div id="nebulytics-chat-container"></div>
+
     <script src="/static/nebulytics-widget.js"></script>
     <script>
-        const ctx = document.getElementById('forecastChart').getContext('2d');
+        // 1. Recuperar datos desde Python (Prophet)
+        const rawData = {{ forecast | tojson }};
+        const labels = rawData.map(d => d.ds);
+        const actualData = rawData.map(d => d.actual || null);
+        const predictionData = rawData.map(d => d.yhat);
+
+        // 2. Configurar la gráfica
+        const ctx = document.getElementById('prophetChart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                datasets: [{
-                    label: 'Real',
-                    data: [180, 210, 195, 240, 270, 260, 305],
-                    borderColor: '#22d3ee',
-                    backgroundColor: 'rgba(34, 211, 238, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }, {
-                    label: 'Predicción IA',
-                    data: [null, null, null, null, null, null, 305, 330, 315, 360, 410, 440],
-                    borderColor: '#a855f7',
-                    borderDash: [5, 5],
-                    tension: 0.4
-                }]
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Ventas Reales',
+                        data: actualData,
+                        borderColor: '#22d3ee',
+                        backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Predicción Nebulytics',
+                        data: predictionData,
+                        borderColor: '#a855f7',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        pointRadius: 0
+                    }
+                ]
             },
             options: {
                 responsive: true,
-                plugins: { legend: { labels: { color: '#94a3b8' } } },
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#94a3b8', font: { weight: 'bold' } } } },
                 scales: {
-                    y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    x: { grid: { display: false }, ticks: { color: '#64748b', maxRotation: 0 } },
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } }
                 }
             }
         });
