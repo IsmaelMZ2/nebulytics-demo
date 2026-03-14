@@ -1,92 +1,82 @@
 (function() {
-    // 1. Configuración de la URL de tu backend en Render
-    const API_URL = "https://nebulytics-demo.onrender.com/api/v1/chatbot/ask";
+    // 1. Crear el contenedor principal
+    const widgetContainer = document.createElement('div');
+    widgetContainer.id = 'nebulytics-ai-widget';
+    document.body.appendChild(widgetContainer);
 
-    // 2. Crear los estilos del Widget (CSS)
+    // 2. Estilos del Widget (Inyectados directamente)
     const style = document.createElement('style');
     style.innerHTML = `
-        #nebulytics-bot-container {
-            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
         #nebulytics-button {
-            background-color: #007bff; color: white; width: 60px; height: 60px;
-            border-radius: 50%; border: none; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 24px;
+            position: fixed; bottom: 20px; right: 20px;
+            width: 60px; height: 60px;
+            background: #22d3ee; border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(34, 211, 238, 0.4);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: all 0.3s ease;
         }
-        #nebulytics-chat-window {
-            display: none; position: absolute; bottom: 80px; right: 0;
-            width: 320px; height: 450px; background: white;
-            border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            flex-direction: column; overflow: hidden; border: 1px solid #eee;
+        #nebulytics-button:hover { transform: scale(1.1); background: #06b6d4; }
+        
+        #nebulytics-window {
+            position: fixed; bottom: 90px; right: 20px;
+            width: 350px; height: 450px;
+            background: #1a1d27; border: 1px solid #2d3343;
+            border-radius: 16px; display: none; flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 9999; overflow: hidden;
+            font-family: sans-serif;
         }
-        #chat-header { background: #007bff; color: white; padding: 15px; font-weight: bold; }
-        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-size: 14px; background: #f9f9f9; }
-        #chat-input-area { display: flex; border-top: 1px solid #eee; padding: 10px; }
-        #chat-input { flex: 1; border: 1px solid #ddd; border-radius: 4px; padding: 8px; outline: none; }
-        #chat-send { background: #007bff; color: white; border: none; padding: 0 15px; margin-left: 5px; border-radius: 4px; cursor: pointer; }
-        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; max-width: 80%; }
-        .user-msg { background: #007bff; color: white; align-self: flex-end; margin-left: auto; }
-        .bot-msg { background: #e9ecef; color: #333; align-self: flex-start; }
+        .chat-header { background: #22d3ee; color: #0f1117; padding: 15px; font-weight: bold; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; color: #e2e8f0; font-size: 14px; }
+        .chat-input { padding: 15px; border-top: 1px solid #2d3343; display: flex; }
+        .chat-input input { 
+            flex: 1; background: #0f1117; border: 1px solid #2d3343; 
+            color: white; padding: 8px; border-radius: 8px; outline: none;
+        }
+        .bot-msg { background: #2d3343; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
     `;
     document.head.appendChild(style);
 
-    // 3. Crear la estructura del Widget
-    const container = document.createElement('div');
-    container.id = 'nebulytics-bot-container';
-    container.innerHTML = `
-        <div id="nebulytics-chat-window">
-            <div id="chat-header">Asistente Nebulytics</div>
-            <div id="chat-messages" style="display: flex; flex-direction: column;">
-                <div class="msg bot-msg">¡Hola! Soy tu asistente de inventario. ¿En qué puedo ayudarte hoy?</div>
+    // 3. HTML del Widget
+    widgetContainer.innerHTML = `
+        <div id="nebulytics-button">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </div>
+        <div id="nebulytics-window">
+            <div class="chat-header">Nebulytics IA Assistant</div>
+            <div class="chat-messages" id="chat-box">
+                <div class="bot-msg">¡Hola! Soy tu asistente IA de Nebulytics. ¿En qué puedo ayudarte hoy con tu tienda?</div>
             </div>
-            <div id="chat-input-area">
-                <input type="text" id="chat-input" placeholder="Escribe un mensaje...">
-                <button id="chat-send">Enviar</button>
+            <div class="chat-input">
+                <input type="text" placeholder="Pregunta sobre tu negocio..." id="user-input">
             </div>
         </div>
-        <button id="nebulytics-button">🤖</button>
     `;
-    document.body.appendChild(container);
 
-    // 4. Lógica de Interacción
+    // 4. Lógica de apertura/cierre
     const btn = document.getElementById('nebulytics-button');
-    const window = document.getElementById('nebulytics-chat-window');
-    const input = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('chat-send');
-    const messages = document.getElementById('chat-messages');
+    const win = document.getElementById('nebulytics-window');
+    
+    btn.onclick = () => {
+        win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+    };
 
-    btn.onclick = () => window.style.display = window.style.display === 'none' ? 'flex' : 'none';
+    // 5. Lógica básica de envío (Simulación IA)
+    const input = document.getElementById('user-input');
+    const chatBox = document.getElementById('chat-box');
 
-    async function sendMessage() {
-        const text = input.value.trim();
-        if (!text) return;
-
-        // Mostrar mensaje del usuario
-        appendMessage('user-msg', text);
-        input.value = '';
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, store_id: "demo_store" })
-            });
-            const data = await response.json();
-            appendMessage('bot-msg', data.response);
-        } catch (error) {
-            appendMessage('bot-msg', "Lo siento, estoy sincronizando inventarios. Intenta de nuevo en un momento.");
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && input.value.trim() !== "") {
+            const userText = input.value;
+            chatBox.innerHTML += `<div style="text-align:right; margin-bottom:10px; color:#22d3ee;">${userText}</div>`;
+            input.value = "";
+            
+            // Simular respuesta de IA
+            setTimeout(() => {
+                chatBox.innerHTML += `<div class="bot-msg">Analizando datos... Según mi predicción, tus ventas de Zapatillas subirán un 15% la próxima semana.</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
         }
-    }
-
-    function appendMessage(className, text) {
-        const div = document.createElement('div');
-        div.className = `msg ${className}`;
-        div.innerText = text;
-        messages.appendChild(div);
-        messages.scrollTop = messages.scrollHeight;
-    }
-
-    sendBtn.onclick = sendMessage;
-    input.onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+    });
 })();
