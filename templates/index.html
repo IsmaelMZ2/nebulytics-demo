@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Nebulytics IA - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background-color: #0b0e14; color: #ffffff; font-family: 'Inter', sans-serif; }
         .glass-card { background: rgba(23, 27, 38, 0.8); border: 1px solid #2d3343; border-radius: 16px; }
@@ -51,6 +52,11 @@
                     </div>
                 </div>
 
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold mb-4 text-cyan-400">Proyección de Ingresos</h3>
+                    <canvas id="forecastChart" height="150"></canvas>
+                </div>
+
                 <div class="glass-card overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-gray-800/50 text-gray-400 text-xs uppercase">
@@ -66,10 +72,8 @@
                             <tr class="border-t border-gray-800">
                                 <td class="p-4 font-semibold">{{ p.name }}</td>
                                 <td class="p-4 text-gray-300">{{ p.sales }}</td>
-                                <td class="p-4">
-                                    <span class="{% if p.stock < 10 %}text-red-400 font-bold{% else %}text-gray-300{% endif %}">
-                                        {{ p.stock }}
-                                    </span>
+                                <td class="p-4 text-{{ 'red-400' if p.stock < 10 else 'gray-300' }} font-bold">
+                                    {{ p.stock }}
                                 </td>
                                 <td class="p-4 text-green-400">{{ p.trend }}</td>
                             </tr>
@@ -81,6 +85,37 @@
         </div>
     </div>
     
-    <div id="nebulytics-chat"></div>
+    <script src="/static/nebulytics-widget.js"></script>
+    <script>
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                    label: 'Real',
+                    data: [180, 210, 195, 240, 270, 260, 305],
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Predicción IA',
+                    data: [null, null, null, null, null, null, 305, 330, 315, 360, 410, 440],
+                    borderColor: '#a855f7',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { labels: { color: '#94a3b8' } } },
+                scales: {
+                    y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
