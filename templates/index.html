@@ -3,23 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nebulytics - Inteligencia para Tiendanube</title>
+    <title>Nebulytics IA - Panel de Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>body { background-color: #111019; color: white; font-family: sans-serif; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #0f1117; color: #e2e8f0; }
+        .card { background-color: #1a1d27; border: 1px solid #2d3343; border-radius: 12px; }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-8">
-    <div class="max-w-3xl text-center space-y-8 relative z-10">
-        <div class="flex justify-center mb-6">
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center text-3xl font-bold">N</div>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-cyan-400">Panel de Control</h1>
+            <p class="text-gray-400">Inteligencia predictiva para tu tienda en Tiendanube</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card p-6">
+                <p class="text-gray-400 text-sm">Ingresos Totales</p>
+                <h2 class="text-3xl font-bold">$2.8M <span class="text-green-400 text-sm">↑ 12.4%</span></h2>
+            </div>
+            <div class="card p-6">
+                <p class="text-gray-400 text-sm">Órdenes Mensuales</p>
+                <h2 class="text-3xl font-bold">1,243 <span class="text-green-400 text-sm">↑ 8.2%</span></h2>
+            </div>
+            <div class="card p-6">
+                <p class="text-gray-400 text-sm">Tasa de Conversión</p>
+                <h2 class="text-3xl font-bold">3.7% <span class="text-red-400 text-sm">↓ 0.4%</span></h2>
+            </div>
         </div>
-        <h1 class="text-5xl font-extrabold text-white">Nebulytics</h1>
-        <p class="text-2xl text-slate-300">Inteligencia predictiva para Tiendanube</p>
-        <div class="pt-8 flex justify-center gap-4">
-            <a href="/api/v1/auth/install" class="bg-white text-black font-bold py-4 px-8 rounded-xl flex items-center gap-3"><i data-lucide="shopping-bag"></i> Conectar Tiendanube</a>
-            <a href="/dashboard" class="bg-gray-800 text-white font-semibold py-4 px-8 rounded-xl border border-gray-700">Ver Demo Dashboard</a>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card p-6">
+                <h3 class="text-xl font-semibold mb-4 text-cyan-400">Proyección de Ingresos (IA Predictiva)</h3>
+                <canvas id="forecastChart" height="200"></canvas>
+            </div>
+
+            <div class="card p-6">
+                <h3 class="text-xl font-semibold mb-4">Alertas Inteligentes</h3>
+                <div class="space-y-4">
+                    {% for alert in alerts %}
+                    <div class="p-4 rounded-lg bg-red-900/20 border border-red-900/50">
+                        <p class="text-sm font-bold text-red-400">Alerta de Stock</p>
+                        <p class="text-xs text-gray-300">{{ alert }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
-    <script>lucide.createIcons();</script>
+
+    <script src="/static/nebulytics-widget.js"></script>
+    
+    <script>
+        // Aquí conectamos los datos de Python con Chart.js
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Ingresos Reales',
+                    data: [180, 210, 195, 250, 280, 260, 310],
+                    borderColor: '#22d3ee',
+                    tension: 0.4
+                }, {
+                    label: 'Predicción IA',
+                    data: [null, null, null, null, null, null, 310, 340, 330, 380, 420, 450],
+                    borderColor: '#a855f7',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }]
+            },
+            options: { plugins: { legend: { labels: { color: 'white' } } } }
+        });
+    </script>
 </body>
 </html>
