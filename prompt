@@ -1,0 +1,269 @@
+Actúa como un equipo completo de ingeniería compuesto por:
+
+- un arquitecto de software senior
+- un ingeniero de machine learning
+- un ingeniero backend experto en APIs
+- un ingeniero frontend especializado en dashboards de datos
+- un ingeniero experto en analítica para ecommerce
+- un especialista en prototipado rápido para hackathons de 72 horas
+
+Tu objetivo es diseñar y generar la base de una aplicación llamada **Nebulytics**, una plataforma de inteligencia predictiva para vendedores de **Tiendanube** que les permita tomar decisiones estratégicas basadas en datos.
+
+La solución debe priorizar:
+
+- rapidez de desarrollo
+- arquitectura simple
+- alto impacto visual para presentación
+- funcionalidades reales basadas en datos
+- experiencia fácil para vendedores sin conocimientos técnicos
+
+Evita sobreingeniería. Este proyecto debe poder construirse en **72 horas**.
+
+------------------------------------------------
+
+CONTEXTO DEL PROYECTO
+
+Nebulytics es una aplicación que integra modelos de Machine Learning y analítica avanzada para ayudar a vendedores de Tiendanube a entender su negocio y anticipar comportamientos futuros.
+
+La aplicación analiza información histórica del negocio como:
+
+- volumen de ventas
+- devoluciones
+- ganancias
+- productos vendidos
+- carritos abandonados
+- niveles de stock
+- comportamiento de clientes
+- promociones utilizadas
+
+A partir de estos datos genera **predicciones, alertas y recomendaciones automáticas**.
+
+La aplicación busca transformar analítica descriptiva (lo que ya pasó) en **analítica predictiva (lo que probablemente pasará)**.
+
+Además, la aplicación incluye un **chatbot inteligente que responde preguntas sobre el negocio** y traduce datos complejos en recomendaciones claras.
+
+------------------------------------------------
+
+PROBLEMA
+
+Muchos negocios en plataformas ecommerce como Tiendanube solo tienen acceso a reportes históricos.
+
+Esto genera problemas como:
+
+- mala planificación de inventario
+- falta de conocimiento sobre productos con mayor potencial
+- baja optimización de promociones
+- poca comprensión del comportamiento del cliente
+- decisiones basadas en intuición en lugar de datos
+
+Nebulytics resuelve esto mediante un sistema de **inteligencia predictiva accesible para cualquier negocio.**
+
+------------------------------------------------
+
+FUNCIONALIDADES PRINCIPALES
+
+1. INTEGRACIÓN CON TIENDANUBE
+
+La aplicación debe conectarse con la API de Tiendanube para importar datos de la tienda.
+
+Datos a importar:
+
+- productos
+- órdenes
+- inventario
+- clientes
+- carritos abandonados
+- descuentos y promociones
+
+El sistema debe sincronizar datos automáticamente.
+
+------------------------------------------------
+
+2. MOTOR DE ANALÍTICA PREDICTIVA
+
+Implementar modelos de machine learning para generar:
+
+PREDICCIÓN DE DEMANDA
+
+Identificar qué productos tienen mayor probabilidad de venderse el próximo mes.
+
+OPTIMIZACIÓN DE INVENTARIO
+
+Detectar:
+
+- productos con riesgo de quedarse sin stock
+- productos con exceso de inventario
+
+SEGMENTACIÓN DE CLIENTES
+
+Agrupar clientes según:
+
+- frecuencia de compra
+- ticket promedio
+- categorías de compra
+- historial de compras
+
+ANÁLISIS DE CARRITOS ABANDONADOS
+
+Detectar patrones y recomendar acciones para recuperar ventas.
+
+RECOMENDACIÓN DE PROMOCIONES
+
+Sugerir:
+
+- descuentos
+- bundles
+- campañas promocionales
+
+basadas en predicción de demanda y comportamiento del cliente.
+
+------------------------------------------------
+
+3. SISTEMA DE ALERTAS INTELIGENTES
+
+El sistema debe generar alertas automáticas como:
+
+"Este producto probablemente se agotará en 6 días."
+
+"Tienes exceso de stock en este producto."
+
+"Este producto podría aumentar ventas si aplicas un descuento del 10%."
+
+Estas alertas deben mostrarse dentro del dashboard.
+
+------------------------------------------------
+
+4. CHATBOT DE NEGOCIO INTELIGENTE
+
+La aplicación debe incluir un **chatbot conversacional** que ayude al vendedor a entender su negocio.
+
+El chatbot debe poder responder preguntas como:
+
+- ¿Qué productos se venderán más el próximo mes?
+- ¿Qué productos tienen bajo rendimiento?
+- ¿Qué promoción debería hacer esta semana?
+- ¿Por qué bajaron mis ventas?
+- ¿Qué clientes compran más?
+- ¿Qué productos tienen riesgo de quedarse sin stock?
+- ¿Cómo puedo aumentar mis ventas?
+
+El chatbot debe:
+
+- consultar la base de datos del negocio
+- consultar resultados del modelo predictivo
+- interpretar métricas automáticamente
+- explicar datos en lenguaje simple
+- generar recomendaciones accionables
+
+Debe actuar como **un asesor de negocio basado en datos.**
+
+------------------------------------------------
+
+5. DASHBOARD INTELIGENTE
+
+Diseñar un dashboard visual que incluya:
+
+- predicción de productos más vendidos
+- alertas de inventario
+- proyección de ingresos
+- segmentos de clientes
+- productos más rentables
+- recomendaciones estratégicas
+- alertas inteligentes
+
+El diseño debe ser claro, moderno y fácil de entender.
+
+------------------------------------------------
+
+STACK TECNOLÓGICO (OPTIMIZADO PARA MVP)
+
+Frontend
+
+Next.js  
+TailwindCSS  
+ShadCN UI  
+Recharts para visualización
+
+Backend
+
+Python con FastAPI
+
+Machine Learning
+
+Python  
+Pandas  
+Scikit-learn  
+Prophet para predicción de demanda
+
+Base de datos
+
+PostgreSQL
+
+Infraestructura
+
+Frontend: Vercel  
+Backend: Railway o Render  
+Base de datos: Supabase
+
+Chatbot
+
+LLM conectado a la base de datos y resultados analíticos.
+
+------------------------------------------------
+
+ARQUITECTURA DEL SISTEMA
+
+Diseñar una arquitectura simple que incluya:
+
+1. Servicio de integración con Tiendanube
+2. Pipeline de ingestión de datos
+3. Base de datos analítica
+4. Servicio de modelos predictivos
+5. Motor de recomendaciones
+6. Motor de alertas
+7. Servicio de chatbot IA
+8. Dashboard web
+
+Explicar cómo todos los componentes interactúan.
+
+------------------------------------------------
+
+MODELOS DE MACHINE LEARNING
+
+Utilizar modelos simples pero efectivos:
+
+Predicción de demanda:
+
+Prophet o regresión para series temporales.
+
+Segmentación de clientes:
+
+K-Means clustering.
+
+Predicción de abandono de carrito:
+
+modelo de clasificación (Logistic Regression o LightGBM).
+
+------------------------------------------------
+
+SALIDA QUE DEBES GENERAR
+
+Genera lo siguiente de forma estructurada:
+
+1. Arquitectura completa del sistema
+2. Diagrama de arquitectura
+3. Esquema de base de datos
+4. Diseño de APIs del backend
+5. Estructura de carpetas del proyecto
+6. Ejemplo de integración con API de Tiendanube
+7. Implementación del modelo de predicción de demanda
+8. Implementación del sistema de alertas
+9. Diseño del chatbot conectado a datos del negocio
+10. Código base del backend
+11. Código base del frontend
+12. Ejemplos de queries analíticas
+13. Diseño del dashboard
+14. Roadmap de desarrollo de 72 horas
+15. Instrucciones de despliegue
+
+Las soluciones deben priorizar rapidez de implementación y viabilidad para un hackathon.
